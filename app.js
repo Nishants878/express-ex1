@@ -1,30 +1,39 @@
+const express = require("express");
+const bodyParser = require("body-parser");
 
-const express = require('express');
-const bodyParser = require('body-parser')
-
-
-const adminData = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
-
+const adminData = require("./routes/admin");
+const shopRoutes = require("./routes/shop");
+const expressHbs = require("express-handlebars");
 const app = express();
-const path = require('path');
+const path = require("path");
 
+app.engine(
+  "hbs",
+  expressHbs({
+    layoutsDir: "views/layouts/",
+    defaultLayout: "main-layout",
+    extname: "hbs",
+  })
+);
 
-app.set('view engine', 'pug');
-app.set('views','views')
-app.use(bodyParser.urlencoded({extended:false}));
+//for handlebars
+app.set("view engine", "hbs");
+app.set("views", "views");
 
-app.use(express.static(path.join(__dirname,'public')))
+//for pug
+// app.set('view engine', 'pug');
+// app.set('views','views')
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static(path.join(__dirname, "public")));
 
 //filtering and only passing routes that starts with admin
-app.use("/admin",adminData.routes);
+app.use("/admin", adminData.routes);
 
 app.use(shopRoutes);
 
+app.use((req, res, send) => {
+  res.status(404).render("404", { pageTitle: "Page not found here" });
+});
 
-app.use((req,res,send)=>{
-    res.status(404).sendFile(path.join(__dirname,'views','404.html'))
-})
-
-
-app.listen(3000)
+app.listen(3000);
