@@ -9,8 +9,8 @@ const adminData = require('./admin');
 
 
 router.get('/',(req,res,next)=>{
-  console.log(adminData.products)
-   res.render('shop');
+const products = adminData.products
+   res.render('shop', {prods:products, docTitle:'Shop'});
 })
 
 
