@@ -1,11 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const adminData = require("./routes/admin");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const expressHbs = require("express-handlebars");
 const app = express();
 const path = require("path");
+const errorController = require('./controllers/error')
 
 //handlebar config
 
@@ -36,12 +37,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 //filtering and only passing routes that starts with admin
-app.use("/admin", adminData.routes);
+app.use("/admin", adminRoutes);
 
 app.use(shopRoutes);
 
-app.use((req, res, send) => {
-  res.status(404).render("404", { pageTitle: "Page not found here" });
-});
+app.use(errorController.get404);
 
 app.listen(3000);
